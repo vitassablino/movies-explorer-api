@@ -15,6 +15,7 @@ const rootRouter = require('./routes/index');
 /* Подключение мидлваров */
 const errorHandler = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const cors = require('./middlewares/cors'); //подключение корс
 
 /* Настройки сервера */
 const { PORT, DATABASE } = process.env;
@@ -40,6 +41,8 @@ const limiter = rateLimit({
 
 app.use(helmet());
 app.use(limiter);
+
+app.use(cors);
 
 /* Включение логгера запросов */
 app.use(requestLogger);
