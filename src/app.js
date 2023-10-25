@@ -24,7 +24,7 @@ const app = express(); //создание точки входа
 
 /* Подключение к БД */
 const db = mongoose.connection;
-mongoose.connect(/* DATABASE || */ DEFAULT_DATABASE, { authSource: 'admin' });
+mongoose.connect(DATABASE || DEFAULT_DATABASE, { authSource: 'admin' });
 db.on('error', console.error.bind(console, 'ошибка подключения к movieDB'))
 
 /* Включение парсеров */
