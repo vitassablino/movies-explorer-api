@@ -5,7 +5,7 @@ const { ValidationError } = require('mongoose').Error;
 const IncorrectDataError = require('../errors/incorrectDataError');
 const ConflictError = require('../errors/conflictError');
 
-const User = require('../models/user');
+const User = require('../models/users');
 
 /* Регистрация пользователя */
 module.exports.createUser = (req, res, next) => {

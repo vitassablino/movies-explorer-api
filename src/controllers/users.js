@@ -6,7 +6,7 @@ const {
 const NotFoundError = require('../errors/notFoundError');
 const IncorrectDataError = require('../errors/incorrectDataError');
 
-const User = require('../models/user');
+const User = require('../models/users');
 
 /* Обработка GET запроса users/me */
 module.exports.getUserInfo = (req, res, next) => {
