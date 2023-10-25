@@ -1,12 +1,8 @@
-module.exports = (err, res, next) => {
-  const { responseStatus = err.status || 500, message } = err;
-  if (err.kind === 'ObjectId') {
-    res.status(400).send({
-      message: 'Неверно переданы данные',
-    });
-  } else {
-    res.status(statusCode).send({
-      message: statusCode === 500 ? 'На сервере произошла ошибка' : message });
-  }
-  next();
+module.exports = (err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const errorMessage = statusCode === 500 ? `Произошла неизвестная ошибка ${err.name}: ${err.message}` : err.message;
+  res.status(statusCode).send({
+    message: errorMessage,
+  });
+  return next();
 };
