@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
   const userToken = authorization.replace('Bearer ', '');   // извлеченние токена
 
   try {
-    payload = jwt.verify(userToken, NODE_ENV === MODE_PRODUCTION ? SECRET_KEY : DEV_KEY);
+    payload = jwt.verify(userToken, NODE_ENV === MODE_PRODUCTION ? SECRET_KEY : DEV_KEY); //
   } catch (err) {
     return next(new AuthorizationError("Для доступа необходимо авторизироваться"));
   }

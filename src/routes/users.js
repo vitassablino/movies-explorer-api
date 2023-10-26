@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { getUserInfo, updateUserInfo } = require('../controllers/users');
 const { celebrate, Joi } = require('celebrate');
 
-/* Получение информации о пользователе */
+/* Получение информации о пользователе / */
 router.get('/me', getUserInfo);
 
 /* Обновление данных о пользователе */

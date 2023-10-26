@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const http2 = require('http2');
 
-const { ValidationError } = require('mongoose').Error;
+const { ValidationError } = require('mongoose').Error; //
 const IncorrectDataError = require('../errors/incorrectDataError');
 const ConflictError = require('../errors/conflictError');
 

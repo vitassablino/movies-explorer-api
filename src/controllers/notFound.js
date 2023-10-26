@@ -1,4 +1,4 @@
-const NotFoundError = require('../errors/notFoundError');
+const NotFoundError = require('../errors/notFoundError'); //
 
 /* Обработчик страницы 404 */
 module.exports.notFound = (req, res, next) => {

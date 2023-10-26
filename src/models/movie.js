@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-const movieSchema = new mongoose.Schema({
+const movieSchema = new mongoose.Schema({ //
   country: {
     type: String,
     required: [true, 'Укажите страну создания фильма'],

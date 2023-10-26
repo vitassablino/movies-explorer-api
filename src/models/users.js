@@ -5,7 +5,7 @@ const AuthorizationError = require('../errors/authorizationError');
 
 /* Cхема пользователя */
 const userSchema = new mongoose.Schema ({
-  email: {
+  email: { //
     validate: {
       validator: (correct) => validator.isEmail(correct),
       message: 'Введённая почта не найдена',

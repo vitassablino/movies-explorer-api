@@ -10,7 +10,7 @@ const {
 /* Обработка GET запроса /movies  */
 router.get('/', getCardsByOwner);
 
-/* Обработка POST запроса /movies  */
+/* Обработка POST запроса /movies/  */
 router.post('/', celebrate({
   body: Joi.object().keys({
     country: Joi.string().required().trim(),

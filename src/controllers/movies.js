@@ -8,7 +8,7 @@ const ForbiddenError = require('../errors/forbiddenError');
 const NotFoundError = require('../errors/notFoundError');
 const IncorrectDataError = require('../errors/incorrectDataError');
 
-const Movie = require('../models/movie');
+const Movie = require('../models/movie'); //
 
 /* Обработка GET запроса /movies */
 module.exports.getCardsByOwner = (req, res, next) => {

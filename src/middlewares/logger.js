@@ -16,7 +16,7 @@ const requestLogger = expressWinston.logger({
 /* Обработчик ошибок, которые возвращает API */
 const errorLogger = expressWinston.errorLogger({
   transports: [
-    new winston.transports.File({
+    new winston.transports.File({ //
       filename: 'logs/error.log',
       maxsize: '1000000',
       maxFiles: '5',

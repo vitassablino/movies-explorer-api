@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { createUser } = require('../controllers/signup');
 
-/* Регистрация нового пользователя */
+/* Регистрация нового пользователя / */
 router.post('/',
 celebrate({
   body: Joi.object().keys({
