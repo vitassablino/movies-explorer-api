@@ -64,7 +64,7 @@ module.exports.createMovieCard = (req, res, next) => {
     });
 };
 
-/* Обработка DELETE  запроса /movies/_id  */
+/* Обработка DELETE  запроса /movies/_id */
 module.exports.deleteMovieCard = (req, res, next) => {
   Movie.findById(req.params.cardId)
     .then((card) => {
