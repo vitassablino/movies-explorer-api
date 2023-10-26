@@ -32,6 +32,14 @@ module.exports.updateUserInfo = (req, res, next) => {
     )
     .then((user) => res.send(user))
     .catch((err) => {
+      if (err instanceof DocumentNotFoundError) {
+        next(new NotFoundError('Пользователь не найден'));
+      } else if (err instanceof CastError) {
+        next(new IncorrectDataError('Некорректный ID'));
+      } else if (err instanceof ValidationError) {
+        next(new IncorrectDataError(`Произошла ошибка: ${err.name}: ${err.message}`));
+      } else {
         next(err);
+      }
     });
 };

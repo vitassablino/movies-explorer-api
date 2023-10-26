@@ -1,6 +1,5 @@
 const router = require('express').Router();
-
-const  { createMovieCardValidator, deleteMovieCardValidator } = require('../middlewares/celebrateValidator');
+const { celebrate, Joi } = require('celebrate');
 
 const {
   getCardsByOwner,
@@ -12,9 +11,29 @@ const {
 router.get('/', getCardsByOwner);
 
 /* Обработка POST запроса /movies/  */
-router.post('/', createMovieCardValidator, createMovieCard);
+router.post('/', celebrate({
+  body: Joi.object().keys({
+    country: Joi.string().required().trim(),
+    director: Joi.string().required().trim(),
+    duration: Joi.number().required(),
+    year: Joi.string().required().trim(),
+    description: Joi.string().required().trim(),
+    image: Joi.string().required().uri().trim(),
+    trailerLink: Joi.string().required().uri().trim(),
+    thumbnail: Joi.string().required().uri().trim(),
+    movieId: Joi.number().required(),
+    nameRU: Joi.string().required().trim(),
+    nameEN: Joi.string().required().trim(),
+  }),
+}),
+createMovieCard);
 
 /* Обработка DELETE  запроса /movies/_id */
-router.delete('/:cardId', deleteMovieCardValidator, deleteMovieCard);
+router.delete('/:cardId', celebrate({
+  params: Joi.object().keys({
+    cardId: Joi.string().required().hex().length(24),
+  }),
+}),
+deleteMovieCard);
 
 module.exports = router;

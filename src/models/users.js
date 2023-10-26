@@ -11,6 +11,8 @@ const userSchema = new mongoose.Schema ({
       message: 'Введённая почта не найдена',
     },
     type: String,
+    minlength: 4,
+    maxlength: 50,
     required: true,
     unique: true,
   },
@@ -24,6 +26,12 @@ const userSchema = new mongoose.Schema ({
     required: true,
     type: String,
     select: false, //по умолчанию хеш пароля пользователя не будет возвращаться из базы
+    validate: {
+      validator(v) {
+        return validator.isStrongPassword(v);
+      },
+      message: (props) => `${props.value} не является надежным паролем`,
+    },
   }
 })
 
