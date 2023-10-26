@@ -67,11 +67,10 @@ module.exports.createMovieCard = (req, res, next) => {
 /* Обработка DELETE  запроса /movies/_id  */
 module.exports.deleteMovieCard = (req, res, next) => {
   Movie.findById(req.params.cardId)
-    .orFail()
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
-        card.deleteOne();
-        res.send({ message: 'Фильм удалён' });
+        return card.deleteOne()
+          .then(() => res.send({ message: 'Фильм удалён' }));
       } else {
         throw new ForbiddenError('Эта карточка вам не принадлежит');
       }
