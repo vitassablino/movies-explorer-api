@@ -1,6 +1,7 @@
+
 const { celebrate, Joi } = require('celebrate');
 
-/* Валидатор создания пользователя */
+/*  Валидатор создания пользователя */
 module.exports.createUserValidator = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -9,7 +10,7 @@ module.exports.createUserValidator = celebrate({
   }),
 });
 
-/* Валидатор логина */
+/*  Валидатор логина */
 module.exports.loginValidator = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
@@ -17,7 +18,7 @@ module.exports.loginValidator = celebrate({
   }),
 });
 
-/* Валидатор обновленной информации о пользователе */
+/*  Валидатор обновленной информации о пользователе */
 module.exports.updateUserValidator = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
@@ -25,7 +26,7 @@ module.exports.updateUserValidator = celebrate({
   }),
 });
 
-/* Валидатор создания карточки */
+/*  Валидатор создания карточки */
 module.exports.createMovieCardValidator = celebrate({
   body: Joi.object().keys({
     country: Joi.string().required().trim(),
@@ -42,7 +43,7 @@ module.exports.createMovieCardValidator = celebrate({
   }),
 });
 
-/* Валидатор удаления карточки */
+/*  Валидатор удаления карточки */
 module.exports.deleteMovieCardValidator = celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().required().hex().length(24),

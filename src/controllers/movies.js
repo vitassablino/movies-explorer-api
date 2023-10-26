@@ -70,7 +70,7 @@ module.exports.deleteMovieCard = (req, res, next) => {
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         return card.deleteOne()
-          .then(() => res.send({ message: 'Фильм удалён' }));
+          .then(() => res.send({ message: 'Фильм удалён' })); //добавлен return и .then
       } else {
         throw new ForbiddenError('Эта карточка вам не принадлежит');
       }

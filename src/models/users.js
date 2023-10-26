@@ -21,9 +21,9 @@ const userSchema = new mongoose.Schema ({
     required: true,
   },
   password: {
+    select: false, //по умолчанию хеш пароля пользователя не будет возвращаться из базы
     required: true,
     type: String,
-    select: false, //по умолчанию хеш пароля пользователя не будет возвращаться из базы
   }
 })
 

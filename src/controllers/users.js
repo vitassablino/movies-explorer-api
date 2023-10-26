@@ -21,6 +21,7 @@ module.exports.getUserInfo = (req, res, next) => {
     });
 };
 
+
 /* Обработка PATCH запроса users/me */
 module.exports.updateUserInfo = (req, res, next) => {
   const { email, name } = req.body;

@@ -12,9 +12,9 @@ const {
 router.get('/', getCardsByOwner);
 
 /* Обработка POST запроса /movies/  */
-router.post('/', createMovieCardValidator, createMovieCard);
+router.post('/', createMovieCardValidator, createMovieCard); //использован кастом валидатор
 
 /* Обработка DELETE  запроса /movies/_id */
-router.delete('/:cardId', deleteMovieCardValidator, deleteMovieCard);
+router.delete('/:cardId', deleteMovieCardValidator, deleteMovieCard); //использован кастом валидатор
 
 module.exports = router;
