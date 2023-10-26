@@ -3,7 +3,6 @@
 Проект является бэкендом проекта "Навигатор фильмов"
 
 ### Используемые в проекте технологии
-
 - [Node.js](https://nodejs.org/ru)
 - [nodemon](https://nodemon.io/)
 - [Express](https://expressjs.com/)
