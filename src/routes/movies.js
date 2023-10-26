@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const  { createMovieCardValidator, deleteMovieCardValidator } = require('../middlewares/celebrateValidator');
+const  { createMovieCardValidator, deleteMovieCardValidator } = require('../middlewares/celebrate');
 
 const {
   getCardsByOwner,
