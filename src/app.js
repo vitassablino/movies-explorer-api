@@ -8,6 +8,7 @@ const mongoose = require('mongoose'); //подключение БД Монго
 const bodyParser = require('body-parser');  //подключение парсера
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet'); //подключение заголовков защиты
+const limiter = require('./middlewares/limiter');
 
 /* Подключение роутов */
 const rootRouter = require('./routes/index');
@@ -26,7 +27,7 @@ const app = express(); //создание точки входа
 /* Подключение к БД */
 const db = mongoose.connection;
 mongoose.connect(DATABASE || DEFAULT_DATABASE, { authSource: 'admin' });
-db.on('error', console.error.bind(console, 'ошибка подключения к movieDB'))
+db.on('error', console.error.bind(console, 'ошибка подключения к bitfilmsdb'))
 
 /* Включение парсеров */
 app.use(express.json());
@@ -34,11 +35,6 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 /* Включение защиты */
-const limiter = rateLimit({
-  windowMs: 20 * 60 * 1000, // за 15 минут
-  max: 1000 // можно совершить максимум 100 запросов с одного IP
-});
-
 app.use(helmet());
 app.use(limiter);
 

@@ -1,5 +1,15 @@
 
 const { celebrate, Joi } = require('celebrate');
+const BadRequestError = require('../errors/badRequestError')
+const BAD_REQUEST_ERROR_MESSAGE = require('../utils/constants')
+
+/* Валидация uri */
+const urlValidation = (url) => {
+  if (isUrl(url)) {
+    return url;
+  }
+  throw new BadRequestError(BAD_REQUEST_ERROR_MESSAGE);
+};
 
 /*  Валидатор создания пользователя */
 module.exports.createUserValidator = celebrate({
@@ -34,9 +44,9 @@ module.exports.createMovieCardValidator = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required().trim(),
     description: Joi.string().required().trim(),
-    image: Joi.string().required().uri().trim(),
-    trailerLink: Joi.string().required().uri().trim(),
-    thumbnail: Joi.string().required().uri().trim(),
+    image: Joi.string().required().custom(urlValidation),
+    trailerLink: Joi.string().required().custom(urlValidation),
+    thumbnail: Joi.string().required().custom(urlValidation),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required().trim(),
     nameEN: Joi.string().required().trim(),

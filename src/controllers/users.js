@@ -4,7 +4,6 @@ const {
   CastError,
 } = require('mongoose').Error;
 const NotFoundError = require('../errors/notFoundError');
-const IncorrectDataError = require('../errors/incorrectDataError'); //
 
 const User = require('../models/users');
 
@@ -31,8 +30,12 @@ module.exports.updateUserInfo = (req, res, next) => {
     { new: true, //возврат новой копии
     runValidators: true } //Включение валидации
     )
-    .then((user) => res.send(user))
-    .catch((err) => {
-        next(err);
-    });
-};
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      } else {
+        res.send(user);
+      }
+    })
+    .catch(next);
+}

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const AuthorizationError = require('../errors/authorizationError');
+const { AUTHORIZATION_BAD_DATA_MESSAGE } = require('../utils/constants');
 
 /* Cхема пользователя */
 const userSchema = new mongoose.Schema ({
@@ -31,13 +32,13 @@ userSchema.statics.findUserByCredentials = function (email, password, res) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new AuthorizationError('Неверный логин или пароль');
+        throw new AuthorizationError(AUTHORIZATION_BAD_DATA_MESSAGE);
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new AuthorizationError('Неверный логин или пароль')
+            throw new AuthorizationError(AUTHORIZATION_BAD_DATA_MESSAGE)
           }
 
           return user;

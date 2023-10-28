@@ -1,9 +1,12 @@
 const bcrypt = require('bcryptjs');
-const http2 = require('http2');
 
 const { ValidationError } = require('mongoose').Error; //
 const IncorrectDataError = require('../errors/incorrectDataError');
 const ConflictError = require('../errors/conflictError');
+
+const CREATE_CODE = require('../utils/constants');
+const SIGNUP_BAD_DATA_MESSAGE = require('../utils/constants');
+const CONFLICT_MESSAGE = require('../utils/constants');
 
 const User = require('../models/users');
 
@@ -16,16 +19,16 @@ module.exports.createUser = (req, res, next) => {
       name: req.body.name
     }))
     .then((user) => {
-      res.status(http2.constants.HTTP_STATUS_OK).send({
+      res.status(CREATE_CODE).send({
         name: user.name,
         email: user.email,
       });
     })
     .catch((err) => {
       if (err instanceof ValidationError) {
-        next(new IncorrectDataError({ message: `Произошла ошибка: ${err.name}: ${err.message}`}));
+        next(new IncorrectDataError(SIGNUP_BAD_DATA_MESSAGE));
       } else if (err.code === 11000) {
-        next(new ConflictError({ message: `Произошла ошибка: ${err.name}: ${err.message}`}));
+        next(new ConflictError(CONFLICT_MESSAGE));
       } else {
         next(err);
       }

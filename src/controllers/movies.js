@@ -8,6 +8,14 @@ const ForbiddenError = require('../errors/forbiddenError');
 const NotFoundError = require('../errors/notFoundError');
 const IncorrectDataError = require('../errors/incorrectDataError');
 
+const MOVIE_FIND_NOT_FOUND_MESSAGE = require('../utils/constants')
+const MOVIE_BAD_ID_MESSAGE = require('../utils/constants')
+const MOVIE_DELETE_NOT_FOUND_MESSAGE = require('../utils/constants')
+const MOVIE_FORBIDDEN_MESSAGE = require('../utils/constants')
+
+
+
+
 const Movie = require('../models/movie'); //
 
 /* Обработка GET запроса /movies */
@@ -16,7 +24,7 @@ module.exports.getCardsByOwner = (req, res, next) => {
     .then((cards) => res.send(cards))
     .catch((err) => {
       if (err instanceof DocumentNotFoundError) {
-        next(new NotFoundError('Фильм не найден'));
+        next(new NotFoundError(MOVIE_FIND_NOT_FOUND_MESSAGE));
       } else {
         next(err);
       }
@@ -57,7 +65,7 @@ module.exports.createMovieCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err instanceof ValidationError) {
-        next(new IncorrectDataError('Введены неверные данные'));
+        next(new IncorrectDataError(MOVIE_BAD_ID_MESSAGE));
       } else {
         next(err);
       }
@@ -70,16 +78,16 @@ module.exports.deleteMovieCard = (req, res, next) => {
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
         return card.deleteOne()
-          .then(() => res.send({ message: 'Фильм удалён' })); //добавлен return и .then
+          .then(() => res.send({ message: MOVIE_FORBIDDEN_MESSAGE })); //добавлен return и .then
       } else {
-        throw new ForbiddenError('Эта карточка вам не принадлежит');
+        throw new ForbiddenError(MOVIE_FORBIDDEN_MESSAGE);
       }
     })
     .catch((err) => {
       if (err instanceof DocumentNotFoundError) {
-        next(new NotFoundError('Фильм с указанным ID не найден'));
+        next(new NotFoundError(MOVIE_DELETE_NOT_FOUND_MESSAGE));
       } else if (err instanceof CastError) {
-        next(new IncorrectDataError('ID фильма неверный'));
+        next(new IncorrectDataError(MOVIE_BAD_ID_MESSAGE));
       } else {
         next(err);
       }
