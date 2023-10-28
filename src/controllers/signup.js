@@ -4,9 +4,9 @@ const { ValidationError } = require('mongoose').Error; //
 const IncorrectDataError = require('../errors/incorrectDataError');
 const ConflictError = require('../errors/conflictError');
 
-const CREATE_CODE = require('../utils/constants');
-const SIGNUP_BAD_DATA_MESSAGE = require('../utils/constants');
-const CONFLICT_MESSAGE = require('../utils/constants');
+const {CREATE_CODE} = require('../utils/constants');
+const {SIGNUP_BAD_DATA_MESSAGE} = require('../utils/constants');
+const {CONFLICT_MESSAGE} = require('../utils/constants');
 
 const User = require('../models/users');
 

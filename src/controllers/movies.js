@@ -8,10 +8,10 @@ const ForbiddenError = require('../errors/forbiddenError');
 const NotFoundError = require('../errors/notFoundError');
 const IncorrectDataError = require('../errors/incorrectDataError');
 
-const MOVIE_FIND_NOT_FOUND_MESSAGE = require('../utils/constants')
-const MOVIE_BAD_ID_MESSAGE = require('../utils/constants')
-const MOVIE_DELETE_NOT_FOUND_MESSAGE = require('../utils/constants')
-const MOVIE_FORBIDDEN_MESSAGE = require('../utils/constants')
+const {MOVIE_FIND_NOT_FOUND_MESSAGE} = require('../utils/constants')
+const {MOVIE_BAD_ID_MESSAGE} = require('../utils/constants')
+const {MOVIE_DELETE_NOT_FOUND_MESSAGE} = require('../utils/constants')
+const {MOVIE_FORBIDDEN_MESSAGE} = require('../utils/constants')
 
 
 

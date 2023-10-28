@@ -19,12 +19,12 @@ const MOVIE_DELETE_NOT_FOUND_MESSAGE = 'Фильм с указанным ID не
 const MOVIE_FIND_NOT_FOUND_MESSAGE = 'Фильм не найден';
 const MOVIE_BAD_ID_MESSAGE = 'Введены неверные данные';
 const URL_NOT_FOUND_MESSAGE = 'Запрашиваемая страница не найдена.';
-const USER_NOT_FOUND_MESSAGE = 'Пользователь с указанным ID не найден.';
+const USER_NOT_FOUND_MESSAGE = 'Пользователь найден.';
 const USER_BAD_ID_MESSAGE = 'Передан некорректный ID пользователя.';
 const USER_BAD_DATA_MESSAGE = 'При обновлении профиля произошла ошибка.';
 const AUTHORIZATION_BAD_DATA_MESSAGE = 'Неверный логин или пароль';
-const AUTHORIZATION_NO_TOKEN_MESSAGE = 'При авторизации произошла ошибка. Токен не передан или передан не в том формате.';
-const AUTHORIZATION_BAD_TOKEN_MESSAGE = 'При авторизации произошла ошибка. Переданный токен некорректен.';
+const AUTHORIZATION_NO_TOKEN_MESSAGE = 'Токен не передан или передан не в том формате.';
+const AUTHORIZATION_BAD_TOKEN_MESSAGE = 'Переданный токен некорректен.';
 const BAD_REQUEST_ERROR_MESSAGE = 'Некорректные данные';
 
 

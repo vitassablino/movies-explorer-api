@@ -4,6 +4,7 @@ const {
   CastError,
 } = require('mongoose').Error;
 const NotFoundError = require('../errors/notFoundError');
+const {USER_NOT_FOUND_MESSAGE} = require('../utils/constants')
 
 const User = require('../models/users');
 
@@ -32,7 +33,7 @@ module.exports.updateUserInfo = (req, res, next) => {
     )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не найден');
+        throw new NotFoundError(USER_NOT_FOUND_MESSAGE);
       } else {
         res.send(user);
       }

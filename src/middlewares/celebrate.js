@@ -1,7 +1,7 @@
 
 const { celebrate, Joi } = require('celebrate');
 const BadRequestError = require('../errors/badRequestError')
-const BAD_REQUEST_ERROR_MESSAGE = require('../utils/constants')
+const {BAD_REQUEST_ERROR_MESSAGE} = require('../utils/constants')
 
 /* Валидация uri */
 const urlValidation = (url) => {
