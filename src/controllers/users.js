@@ -1,42 +1,133 @@
-const {
-  ValidationError,
-  DocumentNotFoundError,
-  CastError,
-} = require('mongoose').Error;
-const NotFoundError = require('../errors/notFoundError');
-const {USER_NOT_FOUND_MESSAGE} = require('../utils/constants')
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const config = require('../utils/config');
 
-const User = require('../models/users');
+const User = require('../models/user');
 
-/* Обработка GET запроса users/me */
-module.exports.getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err instanceof DocumentNotFoundError) {
-        next(new NotFoundError('Пользователь не найден'));
+const NotFoundError = require('../errors/not-found-err');
+const ValidationError = require('../errors/validation-err');
+const ConflictError = require('../errors/conflict-err');
+const UnauthorizedError = require('../errors/unauthorized-err');
+
+const ERROR_MESSAGES = require('../utils/constants');
+
+const SALT_ROUNDS = 10;
+
+const getUserInfo = (req, res, next) => {
+  const userId = req.user._id;
+
+  User.findById(userId)
+    .orFail(new NotFoundError(ERROR_MESSAGES.USER_NOT_FOUND))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError(ERROR_MESSAGES.USER_NOT_FOUND);
       } else {
-        next(err);
+        res.status(200).send({ name: user.name, email: user.email });
       }
+    })
+    .catch((error) => {
+      if (error instanceof mongoose.Error.CastError) {
+        next(new ValidationError(ERROR_MESSAGES.NOT_VALID));
+      }
+      next(error);
     });
 };
 
-
-/* Обработка PATCH запроса users/me */
-module.exports.updateUserInfo = (req, res, next) => {
-  const { email, name } = req.body;
+const updateUserInfo = (req, res, next) => {
+  const { name, email } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
-    { email, name },
-    { new: true, //возврат новой копии
-    runValidators: true } //Включение валидации
-    )
+    { name, email },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(USER_NOT_FOUND_MESSAGE);
-      } else {
-        res.send(user);
+        throw new NotFoundError(ERROR_MESSAGES.USER_NOT_FOUND);
+      }
+      res.status(200).send(user);
+    })
+    .catch((error) => {
+      if (error instanceof mongoose.Error.ValidationError) {
+        next(new ValidationError(ERROR_MESSAGES.NOT_VALID));
+      }
+      if (error.code === 11000) {
+        next(new ConflictError(ERROR_MESSAGES.USER_CONFLICT));
+      }
+      next(error);
+    });
+};
+
+const createUser = (req, res, next) => {
+  const {
+    name, email, password,
+  } = req.body;
+
+  User.findOne({ email })
+    .then((userExists) => {
+      if (userExists) {
+        throw new ConflictError(ERROR_MESSAGES.USER_CONFLICT);
+      }
+      bcrypt.hash(password, SALT_ROUNDS)
+        .then((hash) => User.create({
+          name,
+          email,
+          password: hash,
+        }))
+        .then((user) => {
+          res.status(201).send({
+            _id: user._id, name, email,
+          });
+        })
+        .catch((error) => {
+          if (error instanceof mongoose.Error.ValidationError) {
+            next(new ValidationError(ERROR_MESSAGES.NOT_VALID));
+          }
+          next(error);
+        });
+    })
+    .catch(next);
+};
+
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) throw new ValidationError(ERROR_MESSAGES.NOT_VALID);
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) throw new UnauthorizedError(ERROR_MESSAGES.USER_NOT_FOUND);
+      else {
+        bcrypt.compare(password, user.password)
+          .then((isPasswordValid) => {
+            if (!isPasswordValid) throw new UnauthorizedError(ERROR_MESSAGES.WRONG_CREDENTIALS);
+            const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, { expiresIn: '7d' });
+            res
+              .cookie('jwt', token, {
+                maxAge: 1000 * 60 * 60 * 24 * 7,
+                httpOnly: true,
+                sameSite: 'none',
+                secure: true,
+                /* domen: 'arrayumi.nomoreparties.co', */
+              })
+              .status(200)
+              .send({ token });
+          })
+          .catch(next);
       }
     })
     .catch(next);
-}
+};
+
+const logout = (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход' });
+};
+
+module.exports = {
+  getUserInfo,
+  updateUserInfo,
+  createUser,
+  login,
+  logout,
+};

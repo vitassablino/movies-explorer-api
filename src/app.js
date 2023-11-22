@@ -1,56 +1,43 @@
 require('dotenv').config();
-
-const rateLimit = require('express-rate-limit');
-const validationErrors = require('celebrate').errors;
-const http2 = require('http2');
-const express = require('express'); //
-const mongoose = require('mongoose'); //подключение БД Монго
-const bodyParser = require('body-parser');  //подключение парсера
+const express = require('express');
+const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const helmet = require('helmet'); //подключение заголовков защиты
+const mongoose = require('mongoose');
+const helmet = require('helmet');
+const { errors: celebrateErrors } = require('celebrate');
+
+const app = express();
+const routes = require('./routes');
+
+const config = require('./utils/config');
 const limiter = require('./middlewares/limiter');
 
-/* Подключение роутов */
-const rootRouter = require('./routes/index');
+const { PORT, DB_URL } = config;
 
-/* Подключение мидлваров */
-const errorHandler = require('./middlewares/errorHandler');
+const errors = require('./middlewares/errors');
+const cors = require('./middlewares/cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const cors = require('./middlewares/cors'); //подключение корс
 
-/* Настройки сервера */
-const { PORT, DATABASE } = process.env;
-const { DEFAULT_PORT, DEFAULT_DATABASE } = require('./utils/config');
+mongoose.connect(DB_URL)
+  .then(() => {
+    console.log('mongoDB connected');
+  });
 
-const app = express(); //создание точки входа
-
-/* Подключение к БД */
-const db = mongoose.connection;
-mongoose.connect(DATABASE || DEFAULT_DATABASE, { authSource: 'admin' });
-db.on('error', console.error.bind(console, 'ошибка подключения к bitfilmsdb'))
-
-/* Включение парсеров */
-app.use(express.json());
-app.use(cookieParser());
-app.use(bodyParser.json());
-
-/* Включение защиты */
 app.use(helmet());
-app.use(limiter);
-
+app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(cors);
 
-/* Включение логгера запросов */
 app.use(requestLogger);
+app.use(limiter);
 
-/* Подключение роутов */
-app.use('/', rootRouter);
+app.use('/', routes);
 
-/* Включение логгера ошибок */
 app.use(errorLogger);
 
-/* Включение обработчиков оошибок */
-app.use(validationErrors());
-app.use(errorHandler);
+app.use(celebrateErrors());
+app.use(errors);
 
-app.listen(PORT || DEFAULT_PORT);
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`);
+});

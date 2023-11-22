@@ -1,11 +1,17 @@
-const MODE_PRODUCTION = 'production';
-const DEV_KEY = 'dev-secret-key'; //
-const DEFAULT_PORT = 3000;
-const DEFAULT_DATABASE = 'mongodb://127.0.0.1:27017/bitfilmsdb';
+const {
+  PORT,
+  DB_URL,
+  NODE_ENV,
+  JWT_SECRET,
+} = process.env;
 
-module.exports = {
-  MODE_PRODUCTION,
-  DEV_KEY,
-  DEFAULT_PORT,
-  DEFAULT_DATABASE
+const config = {
+  DB_URL:
+    NODE_ENV === 'production'
+      ? DB_URL
+      : 'mongodb://127.0.0.1:27017/bitfilmsdb',
+  PORT: NODE_ENV === 'production' ? PORT : 3001,
+  JWT_SECRET: NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
 };
+
+module.exports = config;

@@ -1,29 +1,25 @@
 const jwt = require('jsonwebtoken');
+const config = require('../utils/config');
 
-const AuthorizationError = require('../errors/authorizationError');
+const UnauthorizedError = require('../errors/unauthorized-err');
 
-const { NODE_ENV, SECRET_KEY } = process.env;
-const { MODE_PRODUCTION, DEV_KEY } = require('../utils/config');
+const ERROR_MESSAGES = require('../utils/constants');
 
-const { AUTHORIZATION_NO_TOKEN_MESSAGE, AUTHORIZATION_BAD_TOKEN_MESSAGE } = require('../utils/constants');
+const auth = (req, res, next) => {
+  const token = req.cookies.jwt;
 
-/* Мидлвара авторизации */
-module.exports = (req, res, next) => {
-  const { authorization } = req.headers; // достаём авторизационный заголовок
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return next(new AuthorizationError(AUTHORIZATION_NO_TOKEN_MESSAGE));
-  }
+  if (!token) next(new UnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED));
 
   let payload;
-  const userToken = authorization.replace('Bearer ', '');   // извлеченние токена
 
   try {
-    payload = jwt.verify(userToken, NODE_ENV === MODE_PRODUCTION ? SECRET_KEY : DEV_KEY); //
+    payload = jwt.verify(token, config.JWT_SECRET);
   } catch (err) {
-    return next(new AuthorizationError(AUTHORIZATION_BAD_TOKEN_MESSAGE));
+    next(new UnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED));
   }
 
   req.user = payload;
-  return next();
+  next();
 };
+
+module.exports = auth;

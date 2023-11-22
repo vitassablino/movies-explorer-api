@@ -1,68 +1,73 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 const validator = require('validator');
 
-const movieSchema = new mongoose.Schema({ //
-  country: {
-    type: String,
-    required: [true, 'Укажите страну создания фильма'],
-  },
-  director: {
-    type: String,
-    required: [true, 'Укажите режиссёра фильма'],
-  },
-  duration: {
-    type: Number,
-    required: [true, 'Укажите продолжительность фильма'],
-  },
-  year: {
-    type: String,
-    required: [true, 'Укажите год выпуска фильма'],
-  },
-  description: {
-    type: String,
-    required: [true, 'Укажите описание фильма'],
-  },
-  image: {
-    type: String,
-    required: [true, 'Введите ссылку на постер фильма'],
-    validate: {
-      validator: (correct) => validator.isURL(correct),
-      message: 'Неправильный формат ссылки',
+const movieSchema = new Schema(
+  {
+    country: {
+      type: String,
+      required: [true, 'Поле "country" должно быть заполнено'],
+    },
+    director: {
+      type: String,
+      required: [true, 'Поле "director" должно быть заполнено'],
+    },
+    duration: {
+      type: Number,
+      required: [true, 'Поле "duration" должно быть заполнено'],
+    },
+    year: {
+      type: String,
+      required: [true, 'Поле "year" должно быть заполнено'],
+    },
+    description: {
+      type: String,
+      required: [true, 'Поле "description" должно быть заполнено'],
+    },
+    image: {
+      type: String,
+      required: [true, 'Поле "image" должно быть заполнено'],
+      validate: {
+        validator: (v) => validator.isURL(v),
+        message: 'Некорректный URL',
+      },
+    },
+    trailerLink: {
+      type: String,
+      required: [true, 'Поле "trailerLink" должно быть заполнено'],
+      validate: {
+        validator: (v) => validator.isURL(v),
+        message: 'Некорректный URL',
+      },
+    },
+    thumbnail: {
+      type: String,
+      required: [true, 'Поле "thumbnail" должно быть заполнено'],
+      validate: {
+        validator: (v) => validator.isURL(v),
+        message: 'Некорректный URL',
+      },
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
+    },
+    movieId: {
+      type: Number,
+      required: true,
+    },
+    nameRU: {
+      type: String,
+      required: [true, 'Поле "nameRU" должно быть заполнено'],
+    },
+    nameEN: {
+      type: String,
+      required: [true, 'Поле "nameEN" должно быть заполнено'],
     },
   },
-  trailerLink: {
-    type: String,
-    required: [true, 'Укажите ссылку на трейлер фильма'],
-    validate: {
-      validator: (correct) => validator.isURL(correct),
-      message: 'Неправильный формат ссылки',
-    },
+  {
+    versionKey: false,
   },
-  thumbnail: {
-    type: String,
-    required: [true, 'Укажите ссылку на миниатюрное изображение постера к фильму'],
-    validate: {
-      validator: (correct) => validator.isURL(correct),
-      message: 'Неправильный формат ссылки',
-    },
-  },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-    required: [true, 'Укажите _id пользователя, который сохранил фильм'],
-  },
-  movieId: {
-    type: Number,
-    required: [true, 'Укажите ID фильма'],
-  },
-  nameRU: {
-    type: String,
-    required: [true, 'Должно быть указано название фильма на русском языке'],
-  },
-  nameEN: {
-    type: String,
-    required: [true, 'Должно быть указано название фильма на английском языке'],
-  },
-});
+);
 
-module.exports = mongoose.model('movie', movieSchema);
+module.exports = model('movie', movieSchema);
