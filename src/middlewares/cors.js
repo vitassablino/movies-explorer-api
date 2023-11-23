@@ -9,6 +9,7 @@ const allowedCors = [
   'http://localhost:3001',
   'http://localhost:3002',
   'http://localhost:3002',
+  'https://web.postman.co',
 ];
 
 const cors = (req, res, next) => {
