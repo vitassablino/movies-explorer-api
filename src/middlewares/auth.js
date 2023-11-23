@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
-const config = require('../utils/config');
 
 const UnauthorizedError = require('../errors/unauthorized-err');
 
 const ERROR_MESSAGES = require('../utils/constants');
+const { SECRET_KEY } = require('../utils/config');
 
 const auth = (req, res, next) => {
   const token = req.cookies.jwt;
@@ -13,7 +13,7 @@ const auth = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, config.JWT_SECRET);
+    payload = jwt.verify(token, SECRET_KEY);
   } catch (err) {
     next(new UnauthorizedError(ERROR_MESSAGES.UNAUTHORIZED));
   }

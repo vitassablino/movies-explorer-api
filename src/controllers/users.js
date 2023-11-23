@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const config = require('../utils/config');
+const { SECRET_KEY } = require('../utils/config');
 
 const User = require('../models/user');
 
@@ -66,30 +66,22 @@ const createUser = (req, res, next) => {
     name, email, password,
   } = req.body;
 
-  User.findOne({ email })
-    .then((userExists) => {
-      if (userExists) {
-        throw new ConflictError(ERROR_MESSAGES.USER_CONFLICT);
+  return bcrypt.hash(password, SALT_ROUNDS)
+    .then((hash) => User.create({
+      name, email, password: hash,
+    }))
+    .then((user) => res.status(201).send({
+      _id: user._id, name, email,
+    }))
+    .catch((err) => {
+      if (err instanceof mongoose.Error.ValidationError) {
+        next(new ValidationError(ERROR_MESSAGES.NOT_VALID));
+      } else if (err.code === 11000) {
+        next(new ConflictError(ERROR_MESSAGES.USER_CONFLICT));
+      } else {
+        next(err);
       }
-      bcrypt.hash(password, SALT_ROUNDS)
-        .then((hash) => User.create({
-          name,
-          email,
-          password: hash,
-        }))
-        .then((user) => {
-          res.status(201).send({
-            _id: user._id, name, email,
-          });
-        })
-        .catch((error) => {
-          if (error instanceof mongoose.Error.ValidationError) {
-            next(new ValidationError(ERROR_MESSAGES.NOT_VALID));
-          }
-          next(error);
-        });
-    })
-    .catch(next);
+    });
 };
 
 const login = (req, res, next) => {
@@ -98,30 +90,32 @@ const login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) throw new UnauthorizedError(ERROR_MESSAGES.USER_NOT_FOUND);
-      else {
-        bcrypt.compare(password, user.password)
-          .then((isPasswordValid) => {
-            if (!isPasswordValid) throw new UnauthorizedError(ERROR_MESSAGES.WRONG_CREDENTIALS);
-            const token = jwt.sign({ _id: user._id }, config.JWT_SECRET, { expiresIn: '7d' });
-            res
-              .cookie('jwt', token, {
-                maxAge: 1000 * 60 * 60 * 24 * 7,
-                httpOnly: true,
-                sameSite: 'none',
-                secure: true,
-                /* domen: 'arrayumi.nomoreparties.co', */
-              })
-              .status(200)
-              .send({ token });
-          })
-          .catch(next);
-      }
+      return bcrypt.compare(password, user.password)
+        .then((isPasswordValid) => {
+          if (!isPasswordValid) throw new UnauthorizedError(ERROR_MESSAGES.WRONG_CREDENTIALS);
+          const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: '7d' });
+          res
+            .cookie('jwt', token, {
+              maxAge: 1000 * 60 * 60 * 24 * 7,
+              httpOnly: true,
+              sameSite: 'none',
+              secure: true,
+              /* domen: 'arrayumi.nomoreparties.co', */
+            })
+            .status(200)
+            .send({ token });
+        })
+        .catch(next);
     })
     .catch(next);
 };
 
 const logout = (req, res) => {
-  res.clearCookie('jwt').send({ message: 'Выход' });
+  res.clearCookie('jwt', {
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true,
+  }).send({ message: 'Выход' });
 };
 
 module.exports = {
